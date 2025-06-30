@@ -108,7 +108,10 @@ qSlicerAbstractModuleFactoryManagerPrivate::fileBasedFactories()const
 qSlicerAbstractModuleFactoryManagerPrivate::qSlicerModuleFactory*
 qSlicerAbstractModuleFactoryManagerPrivate
 ::registeredModuleFactory(const QString& moduleName)const
-{
+{ 
+  /*if (moduleName.contains("_r")) {
+    return nullptr;
+  }*/
   if (!this->RegisteredModules.contains(moduleName))
   {
     return nullptr;
@@ -268,11 +271,12 @@ void qSlicerAbstractModuleFactoryManager::registerModules()
   // then register file based factories
   foreach(const QString& path, d->SearchPaths)
   {
-    if (d->Verbose)
-    {
-      qDebug() << "Searching path: " << path;
-    }
-    this->registerModules(path);
+      if (d->Verbose)
+      {
+        qDebug() << "Searching path: " << path;
+      }
+        this->registerModules(path);
+      
   }
   emit this->modulesRegistered(d->RegisteredModules.keys());
 }
@@ -379,6 +383,8 @@ void qSlicerAbstractModuleFactoryManager::instantiateModules()
   {
     emit moduleAboutToBeInstantiated(moduleName);
     this->instantiateModule(moduleName);
+   
+    
   }
 
   // XXX See issue #3804

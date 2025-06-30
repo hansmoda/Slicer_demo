@@ -178,6 +178,15 @@ bool vtkSlicerMarkupsInteractionWidget::ProcessInteractionEvent(vtkMRMLInteracti
     case WidgetEventJumpCursor:
       processedEvent = ProcessWidgetJumpCursor(eventData);
       break;
+    case WidgetEventTranslateStart:
+      processedEvent = ProcessWidgetTranslateStart_AddSaveStateForUndo(eventData);
+      break;
+    case WidgetEventRotateStart:
+      processedEvent = ProcessWidgetRotateStart_AddSaveStateForUndo(eventData);
+      break;
+    case WidgetEventScaleStart:
+      processedEvent = ProcessWidgetScaleStart_AddSaveStateForUndo(eventData);
+      break;
     default:
       break;
   }
@@ -217,6 +226,48 @@ bool vtkSlicerMarkupsInteractionWidget::ProcessWidgetJumpCursor(vtkMRMLInteracti
   }
 
   markupsDisplayNode->InvokeEvent(vtkMRMLMarkupsDisplayNode::JumpToPointEvent, jumpToPointEventData);
+  return true;
+}
+
+bool vtkSlicerMarkupsInteractionWidget::ProcessWidgetTranslateStart_AddSaveStateForUndo(vtkMRMLInteractionEventData* vtkNotUsed(eventData))
+{
+  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+  vtkMRMLMarkupsDisplayNode* markupsDisplayNode = this->GetDisplayNode();
+  if (!markupsNode || !markupsDisplayNode)
+  {
+    return false;
+  }
+
+  markupsNode->GetScene()->SaveStateForUndo();
+  return true;
+}
+
+bool vtkSlicerMarkupsInteractionWidget::ProcessWidgetRotateStart_AddSaveStateForUndo(
+  vtkMRMLInteractionEventData* vtkNotUsed(eventData))
+{
+  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+  vtkMRMLMarkupsDisplayNode* markupsDisplayNode = this->GetDisplayNode();
+  if (!markupsNode || !markupsDisplayNode)
+  {
+    return false;
+  }
+
+  markupsNode->GetScene()->SaveStateForUndo();
+  return true;
+}
+
+bool vtkSlicerMarkupsInteractionWidget::ProcessWidgetScaleStart_AddSaveStateForUndo(
+  vtkMRMLInteractionEventData* vtkNotUsed(eventData))
+{
+  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+  vtkMRMLMarkupsDisplayNode* markupsDisplayNode = this->GetDisplayNode();
+  if (!markupsNode || !markupsDisplayNode)
+  {
+    return false;
+  }
+
+  markupsNode->GetScene()->SaveStateForUndo();
+
   return true;
 }
 

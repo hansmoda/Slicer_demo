@@ -80,6 +80,12 @@ public:
 
   bool ProcessWidgetJumpCursor(vtkMRMLInteractionEventData* eventData);
 
+  bool ProcessWidgetTranslateStart_AddSaveStateForUndo(vtkMRMLInteractionEventData* eventData);
+
+  bool ProcessWidgetRotateStart_AddSaveStateForUndo(vtkMRMLInteractionEventData* eventData);
+
+  bool ProcessWidgetScaleStart_AddSaveStateForUndo(vtkMRMLInteractionEventData* eventData);
+
   bool ProcessWidgetMenu(vtkMRMLInteractionEventData* eventData) override;
 
   vtkMRMLNode* GetMRMLNode() override;
