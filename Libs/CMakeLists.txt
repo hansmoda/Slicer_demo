@@ -59,13 +59,14 @@ if(Slicer_BUILD_CLI_SUPPORT)
 endif()
 
 set(MRML_APPLICATION_NAME "${Slicer_MAIN_PROJECT_APPLICATION_NAME}" CACHE STRING "Current MRML scene creator application name" FORCE)
+string(REGEX REPLACE "\\..*" "" Slicer_MAIN_PROJECT_VERSION_PATCH_INT "${Slicer_MAIN_PROJECT_VERSION_PATCH}")
 
 # Convert version to 0xXXYYZZ format where XX=major, YY=minor, ZZ=patch version in hexadecimal.
 # Add a leading 1 (256*256*256*1) to force having a leading 0 for major version (e.g., 04 instead of just 4)
 math(EXPR MRML_APPLICATION_VERSION_HEX "1 << 24
   | ${Slicer_MAIN_PROJECT_VERSION_MAJOR} << 16
   | ${Slicer_MAIN_PROJECT_VERSION_MINOR} << 8
-  | ${Slicer_MAIN_PROJECT_VERSION_PATCH}"
+  | ${Slicer_MAIN_PROJECT_VERSION_PATCH_INT}"
   OUTPUT_FORMAT HEXADECIMAL)
 
 # Remove leading 1 (remove 0x1 and add back just 0x)
