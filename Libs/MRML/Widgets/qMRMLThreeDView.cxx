@@ -484,7 +484,7 @@ void qMRMLThreeDView::resetFocalPoint()
     d->MRMLViewNode->EndModify(wasModifying);
     // Inform the displayable manager that the view is reset, so it can
     // update the box/labels bounds.
-    d->MRMLViewNode->InvokeEvent(vtkMRMLViewNode::ResetFocalPointRequestedEvent);
+   /* d->MRMLViewNode->InvokeEvent(vtkMRMLViewNode::ResetFocalPointRequestedEvent);*/
   }
 
   if (crosshairNode)
