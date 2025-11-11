@@ -252,21 +252,18 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
 double* vtkMRMLViewNode::defaultBackgroundColor()
  {
   //static double backgroundColor[3] = {0.70196, 0.70196, 0.90588};
-  //static double backgroundColor[3] = {0.7568627450980392,
-  //                                    0.7647058823529412,
-  //                                    0.9098039215686275};
-  static double backgroundColor[3] = {
-   0.0,0.0,0.0
-  };
+  static double backgroundColor[3] = {0.0,
+                                      0.0,
+                                      0.0};
   return backgroundColor;
  }
 
  //------------------------------------------------------------------------------
 double* vtkMRMLViewNode::defaultBackgroundColor2()
- {
-  static double backgroundColor2[3] = { 0.0,
+{
+  static double backgroundColor2[3] = {0.0,
                                        0.0,
-                                       0.0 };
+                                       0.0};
   return backgroundColor2;
  }
 
