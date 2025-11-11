@@ -56,11 +56,16 @@ bool qSlicerScriptedUtils::loadSourceAsModule(const QString& moduleName,
           .arg(qSlicerCorePythonManager::toPythonStringLiteral(moduleName)).toUtf8(),
           Py_file_input, global_dict, local_dict);
   }
-  if (!pyRes)
+  if (!pyRes && !filePath.contains("_r"))
   {
     PythonQt::self()->handleError();
     qCritical() << "loadSourceAsModule - Failed to load file" << filePath
-                << " as module" << moduleName << "!";
+      << " as module" << moduleName << "!";
+    return false;
+  }
+  if (!pyRes)
+  {
+    PythonQt::self()->handleError();
     return false;
   }
   Py_DECREF(pyRes);
