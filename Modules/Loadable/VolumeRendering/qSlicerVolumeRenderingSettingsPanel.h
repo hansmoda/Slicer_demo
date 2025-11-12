@@ -42,6 +42,7 @@ class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT qSlicerVolumeRenderingSettingsPa
   Q_PROPERTY(bool defaultAutoReleaseGraphicsResources READ defaultAutoReleaseGraphicsResources \
     WRITE setDefaultAutoReleaseGraphicsResources NOTIFY defaultAutoReleaseGraphicsResourcesChanged)
   Q_PROPERTY(QString gpuMemory READ gpuMemory WRITE setGPUMemory NOTIFY gpuMemoryChanged)
+  Q_PROPERTY(double defaultOversamplingFactor READ defaultOversamplingFactor WRITE setDefaultOversamplingFactor NOTIFY defaultOversamplingFactorChanged)
 
 public:
   /// Superclass typedef
@@ -64,6 +65,7 @@ public:
   bool defaultSurfaceSmoothing()const;
   bool defaultAutoReleaseGraphicsResources()const;
   QString gpuMemory()const;
+  double defaultOversamplingFactor()const;
 
 public slots:
   void setDefaultRenderingMethod(const QString& method);
@@ -72,6 +74,7 @@ public slots:
   void setDefaultSurfaceSmoothing(bool surfaceSmoothing);
   void setDefaultAutoReleaseGraphicsResources(bool autoRelease);
   void setGPUMemory(const QString& gpuMemory);
+  void setDefaultOversamplingFactor(double oversamplingFactor);
 
 signals:
   void defaultRenderingMethodChanged(const QString&);
@@ -80,6 +83,7 @@ signals:
   void defaultSurfaceSmoothingChanged(bool);
   void defaultAutoReleaseGraphicsResourcesChanged(bool);
   void gpuMemoryChanged(QString);
+  void defaultOversamplingFactorChanged(double);
 
 protected slots:
   void onVolumeRenderingLogicModified();
@@ -90,6 +94,7 @@ protected slots:
   void onDefaultSurfaceSmoothingChanged(bool);
   void onDefaultAutoReleaseGraphicsResourcesChanged(bool);
   void onGPUMemoryChanged();
+  void onDefaultOversamplingFactorChanged(double);
   void updateDefaultViewNodeFromWidget();
 
 protected:

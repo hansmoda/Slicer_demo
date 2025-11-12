@@ -360,6 +360,35 @@
             </property>
            </widget>
           </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="OversamplingFactorLabel">
+            <property name="text">
+             <string>Oversampling factor:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="ctkSliderWidget" name="OversamplingFactorSliderWidget">
+            <property name="decimals">
+             <number>1</number>
+            </property>
+            <property name="minimum">
+             <double>0.100000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>3.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>0.200000000000000</double>
+            </property>
+            <property name="value">
+             <double>0.300000000000000</double>
+            </property>
+            <property name="toolTip">
+             <string>Oversampling factor for volume rendering. Higher values result in better quality but slower rendering. Lower values result in faster rendering but lower quality.</string>
+            </property>
+           </widget>
+          </item>
           <item row="5" column="0" colspan="2">
            <widget class="ctkCollapsibleGroupBox" name="AdvancedGroupBox">
             <property name="title">
@@ -391,14 +420,14 @@
             </layout>
            </widget>
           </item>
-          <item row="4" column="0">
+          <item row="6" column="0">
            <widget class="QLabel" name="FramerateLabel_2">
             <property name="text">
              <string>Auto-release resources:</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
+          <item row="6" column="1">
            <widget class="QCheckBox" name="AutoReleaseGraphicsResourcesCheckBox">
             <property name="toolTip">
              <string>Immediately unload volumes from graphics memory when not visible. Reduces memory usage but makes toggling volume visibility slower.</string>

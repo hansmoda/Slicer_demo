@@ -80,6 +80,7 @@ protected slots:
   void onCurrentMemorySizeChanged();
   void onCurrentQualityControlChanged(int index);
   void onCurrentFramerateChanged(double fps);
+  void onCurrentOversamplingFactorChanged(double oversamplingFactor);
   void onAutoReleaseGraphicsResourcesCheckBoxToggled(bool autoRelease);
 
   void updateWidgetFromMRML();

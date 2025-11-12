@@ -151,6 +151,9 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   QObject::connect(this->AutoReleaseGraphicsResourcesCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(onAutoReleaseGraphicsResourcesCheckBoxToggled(bool)));
 
+  QObject::connect(this->OversamplingFactorSliderWidget, SIGNAL(valueChanged(double)),
+                   q, SLOT(onCurrentOversamplingFactorChanged(double)));
+
   void onAutoReleaseGraphicsResourcesChanged(bool autoRelease);
 
   // Volume Properties
@@ -441,6 +444,7 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
   if (firstViewNode)
   {
     d->FramerateSliderWidget->setValue(firstViewNode->GetExpectedFPS());
+    d->OversamplingFactorSliderWidget->setValue(firstViewNode->GetVolumeRenderingOversamplingFactor());
   }
   d->FramerateSliderWidget->setEnabled(
     firstViewNode && firstViewNode->GetVolumeRenderingQuality() == vtkMRMLViewNode::Adaptive );
@@ -742,6 +746,27 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentFramerateChanged(double fps)
     if (displayNode->IsDisplayableInView(viewNode->GetID()))
     {
       viewNode->SetExpectedFPS(fps);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::onCurrentOversamplingFactorChanged(double oversamplingFactor)
+{
+  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
+  if (!displayNode)
+  {
+    return;
+  }
+
+  std::vector<vtkMRMLNode*> viewNodes;
+  displayNode->GetScene()->GetNodesByClass("vtkMRMLViewNode", viewNodes);
+  for (std::vector<vtkMRMLNode*>::iterator it=viewNodes.begin(); it!=viewNodes.end(); ++it)
+  {
+    vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(*it);
+    if (displayNode->IsDisplayableInView(viewNode->GetID()))
+    {
+      viewNode->SetVolumeRenderingOversamplingFactor(oversamplingFactor);
     }
   }
 }

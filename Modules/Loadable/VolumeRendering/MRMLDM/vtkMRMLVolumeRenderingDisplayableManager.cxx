@@ -909,10 +909,17 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
         cpuMapper->SetLockSampleDistanceToInputSpacing(false);
         cpuMapper->SetImageSampleDistance(0.5);
         break;
+      case vtkMRMLViewNode::Fast:
+        cpuMapper->SetAutoAdjustSampleDistances(false);
+        cpuMapper->SetLockSampleDistanceToInputSpacing(false);
+        cpuMapper->SetImageSampleDistance(1.0);
+        break;
     }
+
 
     cpuMapper->SetSampleDistance(displayNode->GetSampleDistance());
     cpuMapper->SetInteractiveSampleDistance(displayNode->GetSampleDistance());
+    
 
     // Make sure the correct mapper is set to the volume
     pipeline->VolumeActor->SetMapper(mapper);
@@ -950,9 +957,16 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
         gpuMapper->SetLockSampleDistanceToInputSpacing(false);
         gpuMapper->SetUseJittering(viewNode->GetVolumeRenderingSurfaceSmoothing());
         break;
+      case vtkMRMLViewNode::Fast:
+        gpuMapper->SetAutoAdjustSampleDistances(false);
+        gpuMapper->SetLockSampleDistanceToInputSpacing(false);
+        gpuMapper->SetUseJittering(true);
+        break;
     }
 
-    gpuMapper->SetSampleDistance(gpuDisplayNode->GetSampleDistance());
+    // Only set sample distance if not in Fast mode (Fast mode already set it above)
+
+    gpuMapper->SetSampleDistance(gpuDisplayNode->GetSampleDistance());   
     gpuMapper->SetMaxMemoryInBytes(this->GetMaxMemoryInBytes(gpuDisplayNode));
 
     // Make sure the correct mapper is set to the volume
@@ -988,9 +1002,19 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
         gpuMultiMapper->SetLockSampleDistanceToInputSpacing(false);
         gpuMultiMapper->SetUseJittering(viewNode->GetVolumeRenderingSurfaceSmoothing());
         break;
+      case vtkMRMLViewNode::Fast:
+        gpuMultiMapper->SetAutoAdjustSampleDistances(false);
+        gpuMultiMapper->SetLockSampleDistanceToInputSpacing(false);
+        gpuMultiMapper->SetUseJittering(true);
+        gpuMultiMapper->SetSampleDistance(multiDisplayNode->GetSampleDistance());
+        break;
     }
 
-    this->UpdateMultiVolumeMapperSampleDistance();
+    // Only update sample distance if not in Fast mode (Fast mode already set it above)
+    if (viewNode->GetVolumeRenderingQuality() != vtkMRMLViewNode::Fast)
+    {
+      this->UpdateMultiVolumeMapperSampleDistance();
+    }
 
     gpuMultiMapper->SetMaxMemoryInBytes(this->GetMaxMemoryInBytes(multiDisplayNode));
   }

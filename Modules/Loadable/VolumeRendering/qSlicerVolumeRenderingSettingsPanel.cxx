@@ -87,7 +87,7 @@ void qSlicerVolumeRenderingSettingsPanelPrivate::init()
   {
     this->QualityControlComboBox->addItem(vtkMRMLViewNode::GetVolumeRenderingQualityAsString(qualityIndex));
   }
-  this->QualityControlComboBox->setCurrentText(vtkMRMLViewNode::GetVolumeRenderingQualityAsString(vtkMRMLViewNode::Normal));
+  this->QualityControlComboBox->setCurrentText(vtkMRMLViewNode::GetVolumeRenderingQualityAsString(vtkMRMLViewNode::Fast));
   QObject::connect(this->QualityControlComboBox, SIGNAL(currentIndexChanged(int)),
                    q, SLOT(onDefaultQualityChanged(int)));
   q->registerProperty("VolumeRendering/DefaultQuality", q,
@@ -132,6 +132,14 @@ void qSlicerVolumeRenderingSettingsPanelPrivate::init()
 
   q->registerProperty("VolumeRendering/GPUMemorySize", q,
                       "gpuMemory", SIGNAL(gpuMemoryChanged(QString)));
+
+  //
+  // Oversampling factor
+  //
+  QObject::connect(this->OversamplingFactorSlider, SIGNAL(valueChanged(double)),
+                   q, SLOT(onDefaultOversamplingFactorChanged(double)));
+  q->registerProperty("VolumeRendering/DefaultOversamplingFactor", q,
+                      "defaultOversamplingFactor", SIGNAL(defaultOversamplingFactorChanged(double)));
 
   // Update default view node from settings when startup completed.
   // MRML scene is not accessible yet from the logic when it is set, so cannot access default view node
@@ -503,6 +511,50 @@ void qSlicerVolumeRenderingSettingsPanel::onDefaultAutoReleaseGraphicsResourcesC
 }
 
 // --------------------------------------------------------------------------
+double qSlicerVolumeRenderingSettingsPanel::defaultOversamplingFactor()const
+{
+  Q_D(const qSlicerVolumeRenderingSettingsPanel);
+  double oversamplingFactor = d->OversamplingFactorSlider->value();
+  return oversamplingFactor;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingSettingsPanel::setDefaultOversamplingFactor(double oversamplingFactor)
+{
+  Q_D(qSlicerVolumeRenderingSettingsPanel);
+  d->OversamplingFactorSlider->setValue(oversamplingFactor);
+  this->onDefaultOversamplingFactorChanged(oversamplingFactor);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingSettingsPanel::onDefaultOversamplingFactorChanged(double oversamplingFactor)
+{
+  Q_D(qSlicerVolumeRenderingSettingsPanel);
+  if (!d->mrmlScene())
+  {
+    return;
+  }
+
+  // Set to default view node
+  vtkMRMLViewNode* defaultViewNode = d->defaultMrmlViewNode();
+  if (defaultViewNode)
+  {
+    defaultViewNode->SetVolumeRenderingOversamplingFactor(oversamplingFactor);
+  }
+
+  // Set to all existing view nodes
+  std::vector<vtkMRMLNode*> viewNodes;
+  d->mrmlScene()->GetNodesByClass("vtkMRMLViewNode", viewNodes);
+  for (std::vector<vtkMRMLNode*>::iterator it=viewNodes.begin(); it!=viewNodes.end(); ++it)
+  {
+    vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(*it);
+    viewNode->SetVolumeRenderingOversamplingFactor(oversamplingFactor);
+  }
+
+  emit defaultOversamplingFactorChanged(oversamplingFactor);
+}
+
+// --------------------------------------------------------------------------
 void qSlicerVolumeRenderingSettingsPanel::updateDefaultViewNodeFromWidget()
 {
   Q_D(qSlicerVolumeRenderingSettingsPanel);
@@ -512,4 +564,5 @@ void qSlicerVolumeRenderingSettingsPanel::updateDefaultViewNodeFromWidget()
   this->onDefaultSurfaceSmoothingChanged(d->SurfaceSmoothingCheckBox->isChecked());
   this->onDefaultAutoReleaseGraphicsResourcesChanged(d->AutoReleaseGraphicsResourcesCheckBox->isChecked());
   this->onGPUMemoryChanged();
+  this->onDefaultOversamplingFactorChanged(d->OversamplingFactorSlider->value());
 }

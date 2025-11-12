@@ -246,6 +246,7 @@ public:
     Adaptive = 0, ///< quality determined from desired update rate
     Normal,       ///< good image quality at reasonable speed
     Maximum,      ///< high image quality, rendering time is not considered
+    Fast,         ///< fast rendering with lower quality
     VolumeRenderingQuality_Last
   };
 
