@@ -1,31 +1,31 @@
- /*=auto=========================================================================
+/*=auto=========================================================================
 
- Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
- See COPYRIGHT.txt
- or http://www.slicer.org/copyright/copyright.txt for details.
+See COPYRIGHT.txt
+or http://www.slicer.org/copyright/copyright.txt for details.
 
- Program:   3D Slicer
- Module:    $RCSfile: vtkMRMLViewNode.cxx,v $
- Date:      $Date: 2006/03/03 22:26:39 $
- Version:   $Revision: 1.3 $
+Program:   3D Slicer
+Module:    $RCSfile: vtkMRMLViewNode.cxx,v $
+Date:      $Date: 2006/03/03 22:26:39 $
+Version:   $Revision: 1.3 $
 
- =========================================================================auto=*/
+=========================================================================auto=*/
 
- // MRML includes
+// MRML includes
 #include "vtkMRMLScene.h"
 #include "vtkMRMLViewNode.h"
 
- // VTK includes
+// VTK includes
 #include <vtkObjectFactory.h>
 
- // STD includes
+// STD includes
 #include <sstream>
 
- //----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLViewNode);
 
- //----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 vtkMRMLViewNode::vtkMRMLViewNode()
  {
   this->BoxVisible = 0;
@@ -59,27 +59,27 @@ vtkMRMLViewNode::vtkMRMLViewNode()
   this->GPUMemorySize = 0; // Means application default
   this->AutoReleaseGraphicsResources = false;
   this->ExpectedFPS = 8.;
-  this->VolumeRenderingQuality = vtkMRMLViewNode::Normal;
+  this->VolumeRenderingQuality = vtkMRMLViewNode::Fast;
   this->RaycastTechnique = vtkMRMLViewNode::Composite;
   this->VolumeRenderingSurfaceSmoothing = false;
   this->VolumeRenderingOversamplingFactor = 2.0;
   this->LinkedControl = 0;
   this->Interacting = 0;
   this->InteractionFlags = 0;
- }
+}
 
- //----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 vtkMRMLViewNode::~vtkMRMLViewNode() = default;
 
- //----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 const char* vtkMRMLViewNode::GetNodeTagName()
- {
+{
   return "View";
- }
+}
 
- //----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
- {
+{
   // Write all attributes not equal to their defaults
   this->Superclass::WriteXML(of, nIndent);
 
@@ -117,11 +117,11 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLFloatMacro(ambientShadowsIntensityScale, AmbientShadowsIntensityScale);
   vtkMRMLWriteXMLFloatMacro(ambientShadowsIntensityShift, AmbientShadowsIntensityShift);
   vtkMRMLWriteXMLEndMacro();
- }
+}
 
- //----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
- {
+{
   int disabledModify = this->StartModify();
 
   this->Superclass::ReadXMLAttributes(atts);
@@ -162,11 +162,11 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLEndMacro();
 
   this->EndModify(disabledModify);
- }
+}
 
- //----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void vtkMRMLViewNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
- {
+{
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
@@ -204,12 +204,12 @@ void vtkMRMLViewNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
   vtkMRMLCopyFloatMacro(AmbientShadowsIntensityShift);
   vtkMRMLCopyIntMacro(LinkedControl);
   vtkMRMLCopyEndMacro();
- }
+}
 
- //----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
- {
-  this->Superclass::PrintSelf(os, indent);
+{
+  this->Superclass::PrintSelf(os,indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintFloatMacro(FieldOfView);
@@ -246,31 +246,28 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintFloatMacro(AmbientShadowsIntensityShift);
   vtkMRMLPrintIntMacro(LinkedControl);
   vtkMRMLPrintEndMacro();
- }
+}
 
- //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 double* vtkMRMLViewNode::defaultBackgroundColor()
- {
+{
   //static double backgroundColor[3] = {0.70196, 0.70196, 0.90588};
-  //static double backgroundColor[3] = {0.7568627450980392,
-  //                                    0.7647058823529412,
-  //                                    0.9098039215686275};
-  static double backgroundColor[3] = {
-   0.0,0.0,0.0
-  };
+  static double backgroundColor[3] = {0.0,
+                                      0.0,
+                                      0.0};
   return backgroundColor;
- }
+}
 
- //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 double* vtkMRMLViewNode::defaultBackgroundColor2()
- {
-  static double backgroundColor2[3] = { 0.0,
+{
+  static double backgroundColor2[3] = {0.0,
                                        0.0,
-                                       0.0 };
+                                       0.0};
   return backgroundColor2;
- }
+}
 
- //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void vtkMRMLViewNode::GetDefaultBoxColor(double color[3])
  {
   color[0] = 0.0;
@@ -278,263 +275,264 @@ void vtkMRMLViewNode::GetDefaultBoxColor(double color[3])
   color[2] = 0.0;
  }
 
- //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 const char* vtkMRMLViewNode::GetAnimationModeAsString(int id)
- {
+{
   switch (id)
   {
-  case Off: return "Off";
-  case Spin: return "Spin";
-  case Rock: return "Rock";
-  default:
-   // invalid id
-   return "";
+    case Off: return "Off";
+    case Spin: return "Spin";
+    case Rock: return "Rock";
+    default:
+      // invalid id
+      return "";
   }
- }
+}
 
- //-----------------------------------------------------------
+//-----------------------------------------------------------
 int vtkMRMLViewNode::GetAnimationModeFromString(const char* name)
- {
+{
   if (name == nullptr)
   {
-   // invalid name
-   return -1;
+    // invalid name
+    return -1;
   }
   for (int ii = 0; ii < AnimationMode_Last; ii++)
   {
-   if (strcmp(name, GetAnimationModeAsString(ii)) == 0)
-   {
-    // found a matching name
-    return ii;
-   }
+    if (strcmp(name, GetAnimationModeAsString(ii)) == 0)
+    {
+      // found a matching name
+      return ii;
+    }
   }
   // unknown name
   return -1;
- }
+}
 
- //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 const char* vtkMRMLViewNode::GetViewAxisModeAsString(int id)
- {
+{
   switch (id)
   {
-  case LookFrom: return "LookFrom";
-  case RotateAround: return "RotateAround";
-  default:
-   // invalid id
-   return "";
+    case LookFrom: return "LookFrom";
+    case RotateAround: return "RotateAround";
+    default:
+      // invalid id
+      return "";
   }
- }
+}
 
- //-----------------------------------------------------------
+//-----------------------------------------------------------
 int vtkMRMLViewNode::GetViewAxisModeFromString(const char* name)
- {
+{
   if (name == nullptr)
   {
-   // invalid name
-   return -1;
+    // invalid name
+    return -1;
   }
   for (int ii = 0; ii < ViewAxisMode_Last; ii++)
   {
-   if (strcmp(name, GetViewAxisModeAsString(ii)) == 0)
-   {
-    // found a matching name
-    return ii;
-   }
+    if (strcmp(name, GetViewAxisModeAsString(ii)) == 0)
+    {
+      // found a matching name
+      return ii;
+    }
   }
   // unknown name
   return -1;
- }
+}
 
- //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 const char* vtkMRMLViewNode::GetSpinDirectionAsString(int id)
- {
+{
   switch (id)
   {
-  case PitchUp: return "PitchUp";
-  case PitchDown: return "PitchDown";
-  case RollLeft: return "RollLeft";
-  case RollRight: return "RollRight";
-  case YawLeft: return "YawLeft";
-  case YawRight: return "YawRight";
-  default:
-   // invalid id
-   return "";
+    case PitchUp: return "PitchUp";
+    case PitchDown: return "PitchDown";
+    case RollLeft: return "RollLeft";
+    case RollRight: return "RollRight";
+    case YawLeft: return "YawLeft";
+    case YawRight: return "YawRight";
+    default:
+      // invalid id
+      return "";
   }
- }
+}
 
- //-----------------------------------------------------------
+//-----------------------------------------------------------
 int vtkMRMLViewNode::GetSpinDirectionFromString(const char* name)
- {
+{
   if (name == nullptr)
   {
-   // invalid name
-   return -1;
+    // invalid name
+    return -1;
   }
   for (int ii = 0; ii < SpinDirection_Last; ii++)
   {
-   if (strcmp(name, GetSpinDirectionAsString(ii)) == 0)
-   {
-    // found a matching name
-    return ii;
-   }
+    if (strcmp(name, GetSpinDirectionAsString(ii)) == 0)
+    {
+      // found a matching name
+      return ii;
+    }
   }
   // unknown name
   return -1;
- }
+}
 
- //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 const char* vtkMRMLViewNode::GetStereoTypeAsString(int id)
- {
+{
   switch (id)
   {
-  case NoStereo: return "NoStereo";
-  case RedBlue: return "RedBlue";
-  case Anaglyph: return "Anaglyph";
-  case QuadBuffer: return "QuadBuffer";
-  case Interlaced: return "Interlaced";
-  case UserDefined_1: return "UserDefined_1";
-  case UserDefined_2: return "UserDefined_2";
-  case UserDefined_3: return "UserDefined_3";
-  default:
-   // invalid id
-   return "";
+    case NoStereo: return "NoStereo";
+    case RedBlue: return "RedBlue";
+    case Anaglyph: return "Anaglyph";
+    case QuadBuffer: return "QuadBuffer";
+    case Interlaced: return "Interlaced";
+    case UserDefined_1: return "UserDefined_1";
+    case UserDefined_2: return "UserDefined_2";
+    case UserDefined_3: return "UserDefined_3";
+    default:
+      // invalid id
+      return "";
   }
- }
+}
 
- //-----------------------------------------------------------
+//-----------------------------------------------------------
 int vtkMRMLViewNode::GetStereoTypeFromString(const char* name)
- {
+{
   if (name == nullptr)
   {
-   // invalid name
-   return -1;
+    // invalid name
+    return -1;
   }
   for (int ii = 0; ii < StereoType_Last; ii++)
   {
-   if (strcmp(name, GetStereoTypeAsString(ii)) == 0)
-   {
-    // found a matching name
-    return ii;
-   }
+    if (strcmp(name, GetStereoTypeAsString(ii)) == 0)
+    {
+      // found a matching name
+      return ii;
+    }
   }
   // unknown name
   return -1;
- }
+}
 
- //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 const char* vtkMRMLViewNode::GetRenderModeAsString(int id)
- {
+{
   switch (id)
   {
-  case Perspective: return "Perspective";
-  case Orthographic: return "Orthographic";
-  default:
-   // invalid id
-   return "";
+    case Perspective: return "Perspective";
+    case Orthographic: return "Orthographic";
+    default:
+      // invalid id
+      return "";
   }
- }
+}
 
- //-----------------------------------------------------------
+//-----------------------------------------------------------
 int vtkMRMLViewNode::GetRenderModeFromString(const char* name)
- {
+{
   if (name == nullptr)
   {
-   // invalid name
-   return -1;
+    // invalid name
+    return -1;
   }
   for (int ii = 0; ii < RenderMode_Last; ii++)
   {
-   if (strcmp(name, GetRenderModeAsString(ii)) == 0)
-   {
-    // found a matching name
-    return ii;
-   }
+    if (strcmp(name, GetRenderModeAsString(ii)) == 0)
+    {
+      // found a matching name
+      return ii;
+    }
   }
   // unknown name
   return -1;
- }
+}
 
- //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 const char* vtkMRMLViewNode::GetVolumeRenderingQualityAsString(int id)
- {
+{
   switch (id)
   {
-  case Adaptive: return "Adaptive";
-  case Normal: return "Normal";
-  case Maximum: return "Maximum";
-  default:
-   // invalid id
-   return "";
+    case Adaptive: return "Adaptive";
+    case Normal: return "Normal";
+    case Maximum: return "Maximum";
+    case Fast: return "Fast";
+    default:
+      // invalid id
+      return "";
   }
- }
+}
 
- //-----------------------------------------------------------
+//-----------------------------------------------------------
 int vtkMRMLViewNode::GetVolumeRenderingQualityFromString(const char* name)
- {
+{
   if (name == nullptr)
   {
-   // invalid name
-   return -1;
+    // invalid name
+    return -1;
   }
   for (int ii = 0; ii < VolumeRenderingQuality_Last; ii++)
   {
-   if (strcmp(name, GetVolumeRenderingQualityAsString(ii)) == 0)
-   {
-    // found a matching name
-    return ii;
-   }
+    if (strcmp(name, GetVolumeRenderingQualityAsString(ii)) == 0)
+    {
+      // found a matching name
+      return ii;
+    }
   }
   // unknown name
   return -1;
- }
+}
 
- //---------------------------------------------------------------------------
- const char* vtkMRMLViewNode::GetRaycastTechniqueAsString(int id)
- {
+//---------------------------------------------------------------------------
+const char* vtkMRMLViewNode::GetRaycastTechniqueAsString(int id)
+{
   switch (id)
   {
-  case Composite: return "Composite";
-  case CompositeEdgeColoring: return "CompositeEdgeColoring";
-  case MaximumIntensityProjection: return "MaximumIntensityProjection";
-  case MinimumIntensityProjection: return "MinimumIntensityProjection";
-  case GradiantMagnitudeOpacityModulation: return "GradiantMagnitudeOpacityModulation";
-  case IllustrativeContextPreservingExploration: return "IllustrativeContextPreservingExploration";
-  default:
-   // invalid id
-   return "";
+    case Composite: return "Composite";
+    case CompositeEdgeColoring: return "CompositeEdgeColoring";
+    case MaximumIntensityProjection: return "MaximumIntensityProjection";
+    case MinimumIntensityProjection: return "MinimumIntensityProjection";
+    case GradiantMagnitudeOpacityModulation: return "GradiantMagnitudeOpacityModulation";
+    case IllustrativeContextPreservingExploration: return "IllustrativeContextPreservingExploration";
+    default:
+      // invalid id
+      return "";
   }
- }
+}
 
- //-----------------------------------------------------------
- int vtkMRMLViewNode::GetRaycastTechniqueFromString(const char* name)
- {
+//-----------------------------------------------------------
+int vtkMRMLViewNode::GetRaycastTechniqueFromString(const char* name)
+{
   if (name == nullptr)
   {
-   // invalid name
-   return -1;
+    // invalid name
+    return -1;
   }
   for (int ii = 0; ii < RaycastTechnique_Last; ii++)
   {
-   if (strcmp(name, GetRaycastTechniqueAsString(ii)) == 0)
-   {
-    // found a matching name
-    return ii;
-   }
+    if (strcmp(name, GetRaycastTechniqueAsString(ii)) == 0)
+    {
+      // found a matching name
+      return ii;
+    }
   }
   // unknown name
   return -1;
- }
+}
 
- //-----------------------------------------------------------
+//-----------------------------------------------------------
 void vtkMRMLViewNode::SetInteracting(int interacting)
- {
+{
   // Don't call Modified()
   this->Interacting = interacting;
- }
+}
 
- //-----------------------------------------------------------
+//-----------------------------------------------------------
 void vtkMRMLViewNode::SetInteractionFlags(unsigned int flags)
- {
+{
   // Don't call Modified()
   this->InteractionFlags = flags;
- }
+}
